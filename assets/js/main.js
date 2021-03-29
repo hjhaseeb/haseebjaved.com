@@ -1,145 +1,235 @@
 /*
-	Solid State by HTML5 UP
-	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+	Indivisible by Pixelarity
+	pixelarity.com | hello@pixelarity.com
+	License: pixelarity.com/license
 */
 
 (function($) {
 
 	var	$window = $(window),
+		$document = $(document),
 		$body = $('body'),
-		$header = $('#header'),
-		$banner = $('#banner');
+		$wrapper = $('#wrapper'),
+		$footer = $('#footer'),
+		$panels = $wrapper.children('.panel'),
+		$animatedLinks = $('.actions.animated a'),
+		$animatedLink = null;
 
 	// Breakpoints.
 		breakpoints({
-			xlarge:	'(max-width: 1680px)',
-			large:	'(max-width: 1280px)',
-			medium:	'(max-width: 980px)',
-			small:	'(max-width: 736px)',
-			xsmall:	'(max-width: 480px)'
+			xlarge:   [ '1281px',  '1680px' ],
+			large:    [ '981px',   '1280px' ],
+			medium:   [ '737px',   '980px'  ],
+			small:    [ '481px',   '736px'  ],
+			xsmall:   [ '361px',   '480px'  ],
+			xxsmall:  [ null,      '360px'  ]
 		});
 
 	// Play initial animations on page load.
 		$window.on('load', function() {
 			window.setTimeout(function() {
-				$body.removeClass('is-preload');
+				$body.removeClass('is-preload-0');
+
+				window.setTimeout(function() {
+					$body.removeClass('is-preload-1');
+				}, 1500);
 			}, 100);
 		});
 
-	// Header.
-		if ($banner.length > 0
-		&&	$header.hasClass('alt')) {
-
-			$window.on('resize', function() { $window.trigger('scroll'); });
-
-			$banner.scrollex({
-				bottom:		$header.outerHeight(),
-				terminate:	function() { $header.removeClass('alt'); },
-				enter:		function() { $header.addClass('alt'); },
-				leave:		function() { $header.removeClass('alt'); }
-			});
-
-		}
-
-	// Menu.
-		var $menu = $('#menu');
-
-		$menu._locked = false;
-
-		$menu._lock = function() {
-
-			if ($menu._locked)
-				return false;
-
-			$menu._locked = true;
-
-			window.setTimeout(function() {
-				$menu._locked = false;
-			}, 350);
-
-			return true;
-
-		};
-
-		$menu._show = function() {
-
-			if ($menu._lock())
-				$body.addClass('is-menu-visible');
-
-		};
-
-		$menu._hide = function() {
-
-			if ($menu._lock())
-				$body.removeClass('is-menu-visible');
-
-		};
-
-		$menu._toggle = function() {
-
-			if ($menu._lock())
-				$body.toggleClass('is-menu-visible');
-
-		};
-
-		$menu
-			.appendTo($body)
+	// Animated links.
+		$animatedLinks
 			.on('click', function(event) {
 
-				event.stopPropagation();
+				var href = $(this).attr('href');
 
-				// Hide.
-					$menu._hide();
+				// Not a panel link? Bail.
+					if (href.charAt(0) != '#'
+					||	(href.length > 1 && $panels.filter(href).length == 0))
+						return;
 
-			})
-			.find('.inner')
-				.on('click', '.close', function(event) {
-
-					event.preventDefault();
-					event.stopPropagation();
-					event.stopImmediatePropagation();
-
-					// Hide.
-						$menu._hide();
-
-				})
-				.on('click', function(event) {
-					event.stopPropagation();
-				})
-				.on('click', 'a', function(event) {
-
-					var href = $(this).attr('href');
-
+				// Prevent default.
 					event.preventDefault();
 					event.stopPropagation();
 
-					// Hide.
-						$menu._hide();
+				// Change panels.
+					window.location.hash = '';
+					window.location.hash = href;
 
-					// Redirect.
+				// Set animated link.
+					$animatedLink = $(this);
+
+			});
+
+	// Panels.
+		var locked = true;
+
+		// Fix images.
+			$panels.each(function() {
+
+				var	$this = $(this),
+					$image = $this.children('.image'),
+					$img = $image.find('img'),
+					position = $img.data('position');
+
+				// Set background.
+					$image.css('background-image', 'url(' + $img.attr('src') + ')');
+
+				// Set position (if set).
+					if (position)
+						$image.css('background-position', position);
+
+				// Hide original.
+					$img.hide();
+
+			});
+
+		// Unlock after a delay.
+			window.setTimeout(function() {
+				locked = false;
+			}, 1250);
+
+		// Hashchange event.
+			$window.on('hashchange', function(event) {
+
+				var $ul,
+					delay = 0,
+					$panel;
+
+				// Get panel.
+					if (window.location.hash && window.location.hash != '#')
+						$panel = $(window.location.hash);
+					else
+						$panel = $panels.first();
+
+				// Prevent default.
+					event.preventDefault();
+					event.stopPropagation();
+
+				// Locked? Bail.
+					if (locked)
+						return;
+
+				// Lock.
+					locked = true;
+
+				// Animated link?
+ 					if ($animatedLink) {
+
+ 						$ul = $animatedLink.parents('ul');
+
+						// Activate.
+							$animatedLink.addClass('active');
+
+						// Set delay.
+							delay = 250;
+
+					}
+
+				// Delay.
+					window.setTimeout(function() {
+
+						// Deactivate all panels.
+							$panels.addClass('inactive');
+
+						// Deactivate footer.
+							$footer.addClass('inactive');
+
+						// Delay.
+							window.setTimeout(function() {
+
+								// Hide all panels.
+									$panels.hide();
+
+								// Show target panel.
+									$panel.show();
+
+								// Reset scroll.
+									$document.scrollTop(0);
+
+								// Delay.
+									window.setTimeout(function() {
+
+										// Activate target panel.
+											$panel.removeClass('inactive');
+
+										// Animated link?
+											if ($animatedLink) {
+
+												// Deactivate.
+													$animatedLink.removeClass('active');
+
+												// Clear.
+													$animatedLink = null;
+
+											}
+
+										// Unlock.
+											locked = false;
+
+										// IE: Refresh.
+											$window.triggerHandler('--refresh');
+
+										window.setTimeout(function() {
+
+											// Activate footer.
+												$footer.removeClass('inactive');
+
+										}, 250);
+
+									}, 100);
+
+							}, 350);
+
+					}, delay);
+
+			});
+
+		// Initialize.
+			(function() {
+
+				var $panel;
+
+				// Get panel.
+					if (window.location.hash && window.location.hash != '#')
+						$panel = $(window.location.hash);
+					else
+						$panel = $panels.first();
+
+				// Deactivate + hide all but initial panel.
+					$panels.not($panel)
+						.addClass('inactive')
+						.hide();
+
+			})();
+
+	// IE: Fixes.
+		if (browser.name == 'ie') {
+
+			// Layout fixes.
+				$window.on('--refresh', function() {
+
+					// Fix min-height/flexbox.
+						$wrapper.css('height', 'auto');
+
 						window.setTimeout(function() {
-							window.location.href = href;
-						}, 350);
+
+							var h = $wrapper.height(),
+								wh = $window.height();
+
+							if (h < wh)
+								$wrapper.css('height', '100vh');
+
+						}, 0);
 
 				});
 
-		$body
-			.on('click', 'a[href="#menu"]', function(event) {
+				$window.on('load', function() {
+					$window.triggerHandler('--refresh');
+				});
 
-				event.stopPropagation();
-				event.preventDefault();
+			// Disable animated links.
+				$('.actions.animated').removeClass('animated');
 
-				// Toggle.
-					$menu._toggle();
-
-			})
-			.on('keydown', function(event) {
-
-				// Hide on escape.
-					if (event.keyCode == 27)
-						$menu._hide();
-
-			});
+		}
 
 })(jQuery);

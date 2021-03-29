@@ -1,39 +1,39 @@
 /*
-	Solid State by HTML5 UP
-	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+	Indivisible by Pixelarity
+	pixelarity.com | hello@pixelarity.com
+	License: pixelarity.com/license
 */
 
-/* Banner */
+/* Panel */
 
-	body.is-preload #banner .logo {
-		-moz-transform: none;
-		-webkit-transform: none;
-		-ms-transform: none;
-		transform: none;
-		opacity: 1;
+	.panel {
+		margin: 0 0 3em 0;
 	}
 
-	body.is-preload #banner h2 {
-		opacity: 1;
-		-moz-transform: none;
-		-webkit-transform: none;
-		-ms-transform: none;
-		transform: none;
-		-moz-filter: none;
-		-webkit-filter: none;
-		-ms-filter: none;
-		filter: none;
+		body.is-preload-0 .panel {
+			opacity: 1;
+		}
+
+			body.is-preload-0 .panel > .image {
+				-moz-transform: none !important;
+				-webkit-transform: none !important;
+				-ms-transform: none !important;
+				transform: none !important;
+			}
+
+			body.is-preload-0 .panel > .content {
+				-moz-transform: none !important;
+				-webkit-transform: none !important;
+				-ms-transform: none !important;
+				transform: none !important;
+			}
+
+/* Footer */
+
+	#footer {
+		margin-top: 0;
 	}
 
-	body.is-preload #banner p {
-		opacity: 01;
-		-moz-transform: none;
-		-webkit-transform: none;
-		-ms-transform: none;
-		transform: none;
-		-moz-filter: none;
-		-webkit-filter: none;
-		-ms-filter: none;
-		filter: none;
-	}
+		body.is-preload-0 #footer {
+			opacity: 1;
+		}
